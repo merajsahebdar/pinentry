@@ -452,11 +452,15 @@ fi
 AM_CONDITIONAL(BUILD_PINENTRY_EFL, test "$pinentry_efl" = "yes")
 
 dnl
-dnl Check for GTK+-2 / GNOME3 pinentry programs.
+dnl Check for GTK+-2 / GTK+-3 / GNOME3 pinentry programs.
 dnl
 AC_ARG_ENABLE(pinentry-gtk2,
             AS_HELP_STRING([--enable-pinentry-gtk2],[build GTK+-2 pinentry]),
             pinentry_gtk_2=$enableval, pinentry_gtk_2=maybe)
+
+AC_ARG_ENABLE(pinentry-gtk3,
+            AS_HELP_STRING([--enable-pinentry-gtk3],[build GTK+-3 pinentry]),
+            pinentry_gtk_3=$enableval, pinentry_gtk_3=maybe)
 
 AC_ARG_ENABLE(pinentry-gnome3,
             AS_HELP_STRING([--enable-pinentry-gnome3],[build GNOME 3 pinentry]),
@@ -479,6 +483,23 @@ if test "$pinentry_gtk_2" != "no"; then
 fi
 AM_CONDITIONAL(BUILD_PINENTRY_GTK_2, test "$pinentry_gtk_2" = "yes")
 
+dnl check if the module gtk+-3.0 exists
+if test "$pinentry_gtk_3" != "no"; then
+	PKG_CHECK_MODULES(
+		GTK3,
+		[gtk+-3.0 >= 3.24.24],
+		[
+			test "$pinentry_gtk_3" != "no" && pinentry_gtk_3=yes
+			test "$pinentry_gnome_3" != "no" && pinentry_gnome_3=yes
+		],
+		[
+			AC_MSG_WARN([pkg-config could not find the module gtk+-3.0])
+			pinentry_gtk_3=no
+		]
+	)
+fi
+AM_CONDITIONAL(BUILD_PINENTRY_GTK_3, test "$pinentry_gtk_3" = "yes")
+
 if test "$pinentry_gnome_3" != "no"; then
 	PKG_CHECK_MODULES(
 		GNOME3,
@@ -493,7 +514,6 @@ if test "$pinentry_gnome_3" != "no"; then
 		]
 	)
 fi
-
 AM_CONDITIONAL(BUILD_PINENTRY_GNOME_3, test "$pinentry_gnome_3" = "yes")
 
 dnl
@@ -768,6 +788,7 @@ tty/Makefile
 efl/Makefile
 emacs/Makefile
 gtk+-2/Makefile
+gtk+-3/Makefile
 gnome3/Makefile
 qt/Makefile
 tqt/Makefile
@@ -791,6 +812,7 @@ AC_MSG_NOTICE([
 	Emacs Pinentry ...: $pinentry_emacs
 	EFL Pinentry .....: $pinentry_efl
 	GTK+-2 Pinentry ..: $pinentry_gtk_2
+	GTK+-3 Pinentry ..: $pinentry_gtk_3
 	GNOME 3 Pinentry .: $pinentry_gnome_3
 	Qt Pinentry ......: $pinentry_qt $pinentry_qt_lib_version
 	TQt Pinentry .....: $pinentry_tqt

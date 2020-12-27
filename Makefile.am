@@ -52,6 +52,12 @@ else
 pinentry_gtk_2 =
 endif
 
+if BUILD_PINENTRY_GTK_3
+pinentry_gtk_3 = gtk+-3
+else
+pinentry_gtk_3 =
+endif
+
 if BUILD_PINENTRY_GNOME_3
 pinentry_gnome_3 = gnome3
 else
@@ -95,7 +101,7 @@ doc =
 endif
 
 SUBDIRS = m4 secmem pinentry ${pinentry_curses} ${pinentry_tty} \
-	${pinentry_emacs} ${pinentry_gtk_2} ${pinentry_gnome_3} \
+	${pinentry_emacs} ${pinentry_gtk_2} ${pinentry_gtk_3} ${pinentry_gnome_3} \
 	${pinentry_qt} ${pinentry_tqt} ${pinentry_w32} \
 	${pinentry_fltk} ${pinentry_efl} ${doc}
 
